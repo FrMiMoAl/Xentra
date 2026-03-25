@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boliche Xtremo – NFC, postpago y promociones inteligentes</title>
+  <meta name="description" content="Startup de eventos y establecimientos con entradas NFC/RFID, postpago inteligente, descuentos por volumen y promociones hiper-personalizadas impulsadas por IA." />
+  <style>
+    :root{
+      --bg:#070611;
+      --bg2:#0b0b1d;
+      --card:#0a1024;
+      --card2:#0d1330;
+      --txt:#f3f4fb;
+      --muted:#b6b6d3;
+      --line:rgba(255,255,255,.10);
+      --acc:#ff3cc7;
+      --acc2:#8b5cff;
+      --acc3:#41d8ff;
+      --good:#28d6a5;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --radius:24px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font:16px/1.6 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(circle at top left, rgba(139,92,255,.45), transparent 30%),
+        radial-gradient(circle at top right, rgba(255,60,199,.22), transparent 28%),
+        linear-gradient(180deg, #171137 0%, #0d0c21 28%, #070611 100%);
+      overflow-x:hidden;
+    }
+    img{display:block;max-width:100%}
+    a{text-decoration:none;color:inherit}
+    .wrap{max-width:var(--max);margin:auto;padding:0 20px}
+
+    .nav{
+      position:sticky;top:0;z-index:20;
+      background:rgba(7,6,17,.68);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .nav-inner{
+      display:flex;align-items:center;justify-content:space-between;gap:16px;
+      min-height:74px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.04em;
+    }
+    .brand-mark{
+      width:14px;height:14px;border-radius:50%;
+      background:linear-gradient(135deg,var(--acc),var(--acc2));
+      box-shadow:0 0 0 6px rgba(255,60,199,.12),0 0 40px rgba(139,92,255,.38);
+      flex:0 0 auto;
+    }
+    .brand span{font-size:1rem}
+    .menu{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .menu a{
+      color:var(--muted);padding:10px 14px;border-radius:999px;transition:.2s ease;
+    }
+    .menu a:hover{background:rgba(255,255,255,.06);color:var(--txt)}
+
+    .hero{padding:52px 0 28px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;
+    }
+    .eyebrow{
+      display:inline-flex;gap:10px;align-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      border-radius:999px;padding:8px 14px;color:#f6d4ff;font-size:.92rem;
+      box-shadow:0 8px 24px rgba(0,0,0,.18);
+    }
+    .hero h1{
+      margin:18px 0 16px;
+      font-size:clamp(2.2rem, 5vw, 4.4rem);
+      line-height:1.02;
+      letter-spacing:-.04em;
+    }
+    .gradient{
+      background:linear-gradient(90deg, #fff 0%, #f8d7ff 40%, #b8a4ff 85%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero p{
+      margin:0 0 22px;color:var(--muted);font-size:1.08rem;max-width:60ch;
+    }
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      min-height:50px;padding:0 18px;border-radius:14px;font-weight:700;
+      border:1px solid transparent;transition:.2s ease;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,var(--acc),var(--acc2));
+      box-shadow:0 16px 40px rgba(147,51,234,.34);
+    }
+    .btn-secondary{
+      border-color:rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:var(--txt);
+    }
+    .btn:hover{transform:translateY(-1px)}
+
+    .hero-stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px;
+    }
+    .stat{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:18px;padding:16px;box-shadow:var(--shadow);
+    }
+    .stat b{display:block;font-size:1.35rem;margin-bottom:4px}
+    .stat span{color:var(--muted);font-size:.95rem}
+
+    .hero-visual{
+      position:relative;min-height:640px;
+    }
+    .glow{
+      position:absolute;inset:10% 8% auto 8%;height:55%;
+      background:radial-gradient(circle, rgba(255,60,199,.28), transparent 60%);
+      filter:blur(30px);pointer-events:none;
+    }
+    .phone{
+      position:absolute;overflow:hidden;
+      border-radius:34px;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 26px 80px rgba(0,0,0,.48);
+      background:#090b18;
+    }
+    .phone img{width:100%;height:100%;object-fit:cover}
+    .phone-a{width:290px;height:560px;right:28px;top:16px;transform:rotate(4deg)}
+    .phone-b{width:260px;height:520px;left:8px;bottom:34px;transform:rotate(-6deg)}
+    .floating-card{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      width:min(360px, 88%);
+      padding:18px 18px 16px;
+      border-radius:24px;
+      background:linear-gradient(180deg, rgba(8,12,30,.92), rgba(13,18,44,.92));
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+    .floating-card h3{margin:0 0 8px;font-size:1rem}
+    .floating-card p{margin:0;color:var(--muted);font-size:.95rem}
+    .floating-card .tag{
+      display:inline-block;margin-top:12px;padding:7px 12px;border-radius:999px;
+      color:#ffe1fb;background:rgba(255,60,199,.14);border:1px solid rgba(255,60,199,.28);font-size:.88rem;
+    }
+
+    section{padding:28px 0}
+    .section-head{margin-bottom:18px}
+    .section-head .mini{
+      display:inline-block;padding:7px 12px;border-radius:999px;
+      background:rgba(139,92,255,.14);border:1px solid rgba(139,92,255,.25);color:#ddd4ff;font-size:.88rem;
+    }
+    .section-head h2{margin:10px 0 8px;font-size:clamp(1.7rem,3vw,2.7rem);letter-spacing:-.03em}
+    .section-head p{margin:0;color:var(--muted);max-width:68ch}
+
+    .grid-3,.grid-4,.grid-2{display:grid;gap:18px}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+
+    .card{
+      background:linear-gradient(180deg, rgba(10,16,36,.92), rgba(10,14,30,.95));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .icon{
+      width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
+      background:linear-gradient(135deg, rgba(255,60,199,.18), rgba(139,92,255,.18));
+      border:1px solid rgba(255,255,255,.1);margin-bottom:14px;font-size:1.2rem;
+    }
+    .card h3{margin:0 0 8px;font-size:1.15rem}
+    .card p{margin:0;color:var(--muted)}
+
+    .flow .step{position:relative;padding-left:22px}
+    .flow .step::before{
+      content:"";position:absolute;left:0;top:9px;width:10px;height:10px;border-radius:50%;
+      background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 0 0 6px rgba(139,92,255,.12);
+    }
+    .flow .step + .step{margin-top:16px}
+    .flow .step b{display:block;margin-bottom:4px}
+    .flow .step span{color:var(--muted)}
+
+    .feature-highlight{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:center;
+    }
+    .feature-bullets{display:grid;gap:12px;margin-top:18px}
+    .feature-bullet{
+      display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:18px;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+    }
+    .dot{
+      width:12px;height:12px;border-radius:50%;margin-top:8px;
+      background:linear-gradient(135deg,var(--acc3),var(--acc2));flex:0 0 auto;
+      box-shadow:0 0 0 5px rgba(65,216,255,.12);
+    }
+    .feature-bullet strong{display:block}
+    .feature-bullet span{color:var(--muted)}
+
+    .mockup-card{padding:12px;border-radius:28px;background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.1)}
+    .mockup-card img{border-radius:22px;border:1px solid rgba(255,255,255,.08)}
+
+    .screens{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+    .screen-card{
+      overflow:hidden;padding:14px;background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);border-radius:26px;box-shadow:var(--shadow);
+    }
+    .screen-card img{
+      width:100%;aspect-ratio:706/1568;object-fit:cover;border-radius:20px;margin-bottom:14px;
+    }
+    .screen-card h3{margin:0 0 8px;font-size:1.12rem}
+    .screen-card p{margin:0;color:var(--muted)}
+
+    .cover-note{
+      margin-top:18px;padding:16px 18px;border-radius:18px;
+      background:rgba(65,216,255,.07);border:1px dashed rgba(65,216,255,.32);color:#dff8ff;
+    }
+    .cover-note b{display:block;margin-bottom:4px}
+
+    .market-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:22px}
+    .list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+    .list li{
+      padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+    }
+    .list strong{color:var(--txt)}
+
+    .cta{
+      text-align:center;padding:38px 24px;
+      background:linear-gradient(135deg, rgba(255,60,199,.14), rgba(139,92,255,.16));
+      border:1px solid rgba(255,255,255,.1);border-radius:32px;box-shadow:var(--shadow);
+    }
+    .cta h2{margin:0 0 10px;font-size:clamp(1.8rem,4vw,3rem);letter-spacing:-.03em}
+    .cta p{margin:0 auto 20px;color:var(--muted);max-width:62ch}
+
+    footer{padding:30px 0 46px;color:var(--muted);text-align:center}
+
+    @media (max-width: 1080px){
+      .hero-grid,.feature-highlight,.market-grid,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+      .hero-visual{min-height:580px}
+      .hero-stats{grid-template-columns:1fr}
+      .phone-a{right:14px}
+      .screens{grid-template-columns:1fr}
+    }
+    @media (max-width: 760px){
+      .nav-inner{padding:10px 0;align-items:flex-start;flex-direction:column}
+      .menu{width:100%}
+      .menu a{padding:8px 12px}
+      .hero{padding-top:24px}
+      .hero-visual{min-height:520px}
+      .phone-a{width:220px;height:440px;right:6px;top:30px}
+      .phone-b{width:190px;height:390px;left:0;bottom:30px}
+      .floating-card{width:min(300px,92%);padding:16px}
+      .card{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="#inicio">
+        <span class="brand-mark"></span>
+        <span>BOLICHE XTREMO</span>
+      </a>
+      <div class="menu">
+        <a href="#producto">Producto</a>
+        <a href="#flujo">Cómo funciona</a>
+        <a href="#pantallas">Pantallas</a>
+        <a href="#mercado">Escalabilidad</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">NFC/RFID · postpago · promociones con IA</span>
+        <h1><span class="gradient">Revolucionamos la experiencia</span> en eventos y establecimientos.</h1>
+        <p>
+          Nuestra startup transforma entradas y consumos en una experiencia fluida, inteligente y escalable.
+          Integramos <b>entradas interactivas con tecnología NFC/RFID</b>, un modelo de <b>postpago con descuentos por volumen</b>
+          y una <b>LLM</b> que analiza el historial del usuario para recomendar promociones hiper-personalizadas en bares,
+          boliches y espacios afines.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#pantallas">Ver demo visual</a>
+          <a class="btn btn-secondary" href="#contacto">Solicitar pitch</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <b>NFC/RFID</b>
+            <span>Acceso más rápido, menos fricción y una identidad digital reutilizable en el venue.</span>
+          </div>
+          <div class="stat">
+            <b>Postpago</b>
+            <span>Flexibilizamos el consumo y premiamos volumen sin depender de una compra rígida por adelantado.</span>
+          </div>
+          <div class="stat">
+            <b>LLM integrada</b>
+            <span>Recomendaciones de promociones según hábitos, consumo y afinidad con otros lugares.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-label="Vista previa de la app">
+        <div class="glow"></div>
+        <div class="phone phone-a"><img src="assets/cliente.png" alt="Pantalla de cliente con puntos y nivel Gold" /></div>
+        <div class="phone phone-b"><img src="assets/escanear.png" alt="Pantalla para escanear tarjeta NFC" /></div>
+        <div class="floating-card">
+          <h3>Portada principal lista para reemplazo</h3>
+          <p>
+            Este bloque ya está preparado para que luego coloques tu imagen principal o hero visual.
+            Mientras tanto, la portada usa un collage con las pantallas reales del producto.
+          </p>
+          <span class="tag">Cuando me envíes la quinta imagen, se integra aquí</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="producto">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="mini">Propuesta de valor</span>
+        <h2>Más allá del ticket: una capa de fidelización, datos y monetización.</h2>
+        <p>
+          Superamos la lógica transaccional de plataformas tradicionales al convertir cada entrada y cada interacción
+          en una fuente de eficiencia operativa, personalización comercial y engagement continuo.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <article class="card">
+          <div class="icon">⚡</div>
+          <h3>Acceso instantáneo</h3>
+          <p>
+            El usuario entra con su tarjeta o pulsera NFC/RFID, reduciendo colas, errores manuales y tiempos de validación.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="icon">💳</div>
+          <h3>Modelo de postpago</h3>
+          <p>
+            Permitimos consolidar consumos y aplicar descuentos por volumen, creando una experiencia más cómoda y flexible.
+          </p>
+        </article>
+
+        <article class="card">
+          <div class="icon">🧠</div>
+          <h3>Promociones inteligentes</h3>
+          <p>
+            La LLM interpreta historial de consumo y preferencia del usuario para recomendar promos relevantes y accionables.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="flujo">
+    <div class="wrap feature-highlight">
+      <div>
+        <div class="section-head">
+          <span class="mini">Cómo funciona</span>
+          <h2>Un ecosistema conectando acceso, consumo y fidelización.</h2>
+          <p>
+            La arquitectura multiplataforma no solo ordena la logística financiera del venue, también crea un circuito de datos
+            que impulsa recompensas, reactivación y retención.
+          </p>
+        </div>
+
+        <div class="card flow">
+          <div class="step">
+            <b>1. Ingreso con NFC/RFID</b>
+            <span>El usuario se identifica al instante y abre una experiencia conectada desde el primer contacto.</span>
+          </div>
+          <div class="step">
+            <b>2. Consumo postpago con reglas de volumen</b>
+            <span>El sistema acumula puntos, descuentos o beneficios según la dinámica comercial del establecimiento.</span>
+          </div>
+          <div class="step">
+            <b>3. Recomendaciones personalizadas</b>
+            <span>La LLM detecta patrones de afinidad y sugiere promociones en el momento adecuado.</span>
+          </div>
+          <div class="step">
+            <b>4. Reactivación y redescubrimiento</b>
+            <span>Actividades dinámicas y campañas inteligentes ayudan al usuario a volver a sus espacios favoritos.</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="mockup-card">
+          <img src="assets/promociones.png" alt="Pantalla de promociones activas en la aplicación" />
+        </div>
+        <div class="feature-bullets">
+          <div class="feature-bullet">
+            <span class="dot"></span>
+            <div>
+              <strong>Operación más eficiente</strong>
+              <span>Menos fricción en acceso, mejor control de promociones y gestión más clara del cliente.</span>
+            </div>
+          </div>
+          <div class="feature-bullet">
+            <span class="dot"></span>
+            <div>
+              <strong>Mayor ticket y recurrencia</strong>
+              <span>Descuentos inteligentes y programas de puntos incentivan compras repetidas y mayor consumo.</span>
+            </div>
+          </div>
+          <div class="feature-bullet">
+            <span class="dot"></span>
+            <div>
+              <strong>Base de datos escalable</strong>
+              <span>Cada interacción fortalece el perfil del usuario y mejora futuras recomendaciones.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pantallas">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="mini">Interfaz del producto</span>
+        <h2>Pantallas que ya puedes mostrar en la web.</h2>
+        <p>
+          Integré tus cuatro capturas reales para que la página se vea como una startup en fase demo/pitch y no como un concepto abstracto.
+        </p>
+      </div>
+
+      <div class="screens">
+        <article class="screen-card">
+          <img src="assets/cliente.png" alt="Pantalla de cliente con puntos, nivel y acciones de descuento" />
+          <h3>Perfil del cliente y programa de fidelización</h3>
+          <p>
+            Muestra el nivel del usuario, sus puntos acumulados y acciones clave como agregar puntos, aplicar descuentos o renovar membresía.
+          </p>
+        </article>
+
+        <article class="screen-card">
+          <img src="assets/escanear.png" alt="Pantalla para escanear tarjeta NFC del cliente" />
+          <h3>Escaneo de tarjeta NFC</h3>
+          <p>
+            La interfaz de acceso permite leer la tarjeta del cliente de forma simple y rápida, ideal para venues con alto flujo de personas.
+          </p>
+        </article>
+
+        <article class="screen-card">
+          <img src="assets/nueva-promocion.png" alt="Pantalla para crear una nueva promoción" />
+          <h3>Creación de promociones</h3>
+          <p>
+            El establecimiento puede lanzar promociones con título, descripción y puntos de recompensa, manteniendo control directo sobre la oferta.
+          </p>
+        </article>
+
+        <article class="screen-card">
+          <img src="assets/promociones.png" alt="Pantalla con promociones activas y botón nueva promo" />
+          <h3>Gestión de promociones activas</h3>
+          <p>
+            Se visualizan promos activas, su estado y el control para habilitarlas o desactivarlas, creando una operación comercial ágil y medible.
+          </p>
+        </article>
+      </div>
+
+      <div class="cover-note">
+        <b>Espacio reservado para tu imagen principal/portada</b>
+        Ya dejé la estructura lista para reemplazar el collage del hero por tu quinta imagen apenas la generes. Solo habría que insertar ese archivo en la carpeta <code>assets</code> y cambiar una referencia en el bloque principal.
+      </div>
+    </div>
+  </section>
+
+  <section id="mercado">
+    <div class="wrap market-grid">
+      <div>
+        <div class="section-head">
+          <span class="mini">Escalabilidad</span>
+          <h2>Diseñada para un mercado de alto volumen como Estados Unidos.</h2>
+          <p>
+            La propuesta no se limita a un solo boliche o bar. El modelo puede crecer hacia cadenas, festivales, arenas,
+            clubes y redes de establecimientos que buscan combinar acceso, pago, loyalty y personalización bajo una misma capa tecnológica.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <ul class="list">
+          <li><strong>Multiplataforma:</strong> operación para staff, administración de promociones y experiencia para cliente final desde una misma arquitectura.</li>
+          <li><strong>Data network effect:</strong> mientras más locales participan, más fuerte es la capacidad de recomendación y segmentación.</li>
+          <li><strong>Monetización flexible:</strong> membresías, fee por operación, analítica avanzada y campañas patrocinadas.</li>
+          <li><strong>Engagement continuo:</strong> el usuario no solo entra al lugar; vuelve, acumula beneficios y redescubre espacios afines.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="wrap">
+      <div class="cta">
+        <h2>Convierte cada entrada en una relación de largo plazo.</h2>
+        <p>
+          Esta web ya quedó adaptada al mensaje de tu startup, a tus capturas de producto y a la futura portada principal.
+          Cuando me envíes la quinta imagen, se puede dejar el hero completamente terminado para pitch, demo o landing page comercial.
+        </p>
+        <div class="hero-actions" style="justify-content:center;">
+          <a class="btn btn-primary" href="mailto:contacto@bolichextremo.com">Contacto comercial</a>
+          <a class="btn btn-secondary" href="#inicio">Volver arriba</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">© 2026 Boliche Xtremo · NFC/RFID, postpago y promociones hiper-personalizadas con IA.</div>
+  </footer>
+</body>
+</html>
